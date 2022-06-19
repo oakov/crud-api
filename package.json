@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon",
-    "start:prod": "webpack && node dist/bundle.js"
+    "start:prod": "webpack && node dist/bundle.cgjs",
+    "start:multi": "nodemon --multi"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,7 @@
   "author": "Oleg Kovylin",
   "license": "ISC",
   "dependencies": {
+    "@types/dotenv": "^8.2.0",
     "dotenv": "^16.0.1",
     "uuid": "^8.3.2"
   },

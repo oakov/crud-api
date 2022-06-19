@@ -7,7 +7,8 @@ const __dirname = dirname(__filename);
 
 export default {
   mode: 'development',
-  entry: './src/index.ts',
+  context: path.resolve(__dirname, 'src'),
+  entry: path.resolve(__dirname, 'src/index.ts'),
   module: {
     rules: [
       {
@@ -21,15 +22,15 @@ export default {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
-    path: path.join(__dirname, 'dist'),
-    module: true,
-    chunkFormat: 'module',
+    filename: 'bundle.cjs',
+    path: path.resolve(__dirname, 'dist'),
+    // module: true,
+    // chunkFormat: 'module',
   },
   target: 'node',
-  experiments: {
-    outputModule: true,
-  },
+  // experiments: {
+  //   outputModule: true,
+  // },
   // optimization: {
   //   minimize: true,
   // },

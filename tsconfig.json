@@ -7,8 +7,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "moduleResolution": "Node16"
+    "moduleResolution": "node"
   },
+  "files": ["src/prepare_answer.ts"],
+  "include": ["./", "./src"],
   "ts-node": {
     "esm": true
   }
