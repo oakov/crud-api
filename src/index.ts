@@ -4,81 +4,54 @@ import prepareAnswer from './prepare_answer.js';
 import cluster from 'cluster';
 import { cpus } from 'os';
 
-if (cluster.isPrimary && process.argv[2] === '--multi') {
-  console.log(`Primary ${process.pid} is running`);
-  const cpu: number = cpus().length;
+export const Serv = (): void => {
+  if (cluster.isPrimary && process.argv[2] === '--multi') {
+    console.log(`Primary ${process.pid} is running`);
+    const cpu: number = cpus().length;
 
-  for (let i = 0; i < cpu; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('exit', (worker) => {
-    console.log(`worker ${worker.process.pid} died`);
-  });
-} else {
-  dotenv.config();
-  const createMyServer = createServer(
-    (req: IncomingMessage, res: ServerResponse): void => {
-      if (cluster.isWorker)
-        console.log(`Worker ${cluster.worker.id} handle request`);
-      prepareAnswer(req)
-        .then((answer) => {
-          res.writeHead(answer.status, {
-            'Content-Length': Buffer.byteLength(answer.body),
-            'Content-Type': 'application/json',
-          });
-          res.write(answer.body);
-          res.end();
-        })
-        .catch((err) => {
-          res.writeHead(500, {
-            'Content-Type': 'application/json',
-          });
-          res.write(
-            JSON.stringify({
-              message:
-                'An error occurred on the server while executing the request',
-            })
-          );
-          res.end();
-        });
+    for (let i = 0; i < cpu; i++) {
+      cluster.fork();
     }
-  );
 
-  createMyServer.listen(process.env.PORT, () =>
-    process.stdout.write(`Started at port ${process.env.PORT}\n`)
-  );
+    cluster.on('exit', (worker) => {
+      console.log(`worker ${worker.process.pid} died`);
+    });
+  } else {
+    dotenv.config();
+    const createMyServer = createServer(
+      (req: IncomingMessage, res: ServerResponse): void => {
+        if (cluster.isWorker)
+          console.log(`Worker ${cluster.worker.id} handle request`);
+        prepareAnswer(req)
+          .then((answer) => {
+            res.writeHead(answer.status, {
+              'Content-Length': Buffer.byteLength(answer.body),
+              'Content-Type': 'application/json',
+            });
+            res.write(answer.body);
+            res.end();
+          })
+          .catch((err) => {
+            res.writeHead(500, {
+              'Content-Type': 'application/json',
+            });
+            res.write(
+              JSON.stringify({
+                message:
+                  'An error occurred on the server while executing the request',
+              })
+            );
+            res.end();
+          });
+      }
+    );
 
-  if (cluster.isWorker) console.log(`Worker ${process.pid} started `);
-}
+    createMyServer.listen(process.env.PORT, () =>
+      process.stdout.write(`Started at port ${process.env.PORT}\n`)
+    );
 
-// dotenv.config();
-// const createMyServer = createServer(
-//   (req: IncomingMessage, res: ServerResponse): void => {
-//     prepareAnswer(req)
-//       .then((answer) => {
-//         res.writeHead(answer.status, {
-//           'Content-Length': Buffer.byteLength(answer.body),
-//           'Content-Type': 'application/json',
-//         });
-//         res.write(answer.body);
-//         res.end();
-//       })
-//       .catch((err) => {
-//         res.writeHead(500, {
-//           'Content-Type': 'application/json',
-//         });
-//         res.write(
-//           JSON.stringify({
-//             message:
-//               'An error occurred on the server while executing the request',
-//           })
-//         );
-//         res.end();
-//       });
-//   }
-// );
+    if (cluster.isWorker) console.log(`Worker ${process.pid} started `);
+  }
+};
 
-// createMyServer.listen(process.env.PORT, () =>
-//   process.stdout.write(`Started at port ${process.env.PORT}\n`)
-// );
+Serv();
