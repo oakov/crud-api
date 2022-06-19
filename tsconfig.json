@@ -9,8 +9,6 @@
     "allowJs": true,
     "moduleResolution": "node"
   },
-  "files": ["src/prepare_answer.ts"],
-  "include": ["./", "./src"],
   "ts-node": {
     "esm": true
   }
